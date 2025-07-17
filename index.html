@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* Global Styles */
     body { background-color: #081c2c; color: #fff; font-family: 'Prompt', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
     .container { max-width: 440px; width: 100%; text-align: center; }
     .main-car-image { width: 100%; max-width: 300px; margin: 0 auto 20px; }
@@ -60,20 +61,39 @@
     </div>
   </div>
   <script>
-    const cars = [
-      { name: 'New Yaris Sport', price: 800 },
-      { name: 'Almera Sportech', price: 800 },
-      { name: 'Ciaz', price: 800 },
-      { name: 'City Turbo', price: 1000 },
-      { name: 'New Yaris Ativ', price: 900 },
-      { name: 'Veloz', price: 1499 },
-      { name: 'Cross', price: 1499 },
-      { name: 'Xpander', price: 1499 },
-      { name: 'Toyota revo 4door', price: 1499 },
-      { name: 'ISUZU M-X', price: 1990 },
-      { name: 'FORD RANGER RAPTOR', price: 2500 },
-      { name: 'Pajero Sport Elite Edition', price: 1999 }
-    ];
+    const filenameMap = {
+      'New Yaris Sport': 'New-Yaris-Sport',
+      'Almera Sportech': 'Nissan-Almera-Sportech',
+      'Ciaz': 'Suzuki-Ciaz',
+      'City Turbo': 'Honda-City-Turbo',
+      'New Yaris Ativ': 'New-Yaris-Ativ',
+      'Veloz': 'Toyota-Veloz',
+      'Cross': 'Toyota-Corolla-Cross',
+      'Xpander': 'Mitsubishi-Xpander',
+      'Toyota revo 4door': 'Toyota-Revo-4-door',
+      'ISUZU M-X': 'Isuzu-MU-X',
+      'FORD RANGER RAPTOR': 'Ford-Ranger-Raptor',
+      'Pajero Sport Elite Edition': 'Pajero-Sport-e'
+    };
+
+    const cars = Object.keys(filenameMap).map(name => ({ name, price: getPriceFor(name) }));
+
+    function getPriceFor(name) {
+      switch(name) {
+        case 'New Yaris Sport': return 800;
+        case 'Almera Sportech': return 800;
+        case 'Ciaz': return 800;
+        case 'City Turbo': return 1000;
+        case 'New Yaris Ativ': return 900;
+        case 'Veloz': return 1499;
+        case 'Cross': return 1499;
+        case 'Xpander': return 1499;
+        case 'Toyota revo 4door': return 1499;
+        case 'ISUZU M-X': return 1990;
+        case 'FORD RANGER RAPTOR': return 2500;
+        case 'Pajero Sport Elite Edition': return 1999;
+      }
+    }
 
     const carSelect = document.getElementById('car-model'),
           mainImg = document.getElementById('main-img'),
@@ -90,15 +110,12 @@
     function pad(n) { return n < 10 ? '0' + n : n; }
 
     function getLocalDate() {
-      const now = new Date(),
-            tz = now.getTimezoneOffset() * 60000,
-            local = new Date(now.getTime() - tz + 7 * 3600000);
-      return local;
+      const now = new Date(), tz = now.getTimezoneOffset() * 60000;
+      return new Date(now.getTime() - tz + 7 * 3600000);
     }
 
     function initDateTime() {
-      const now = getLocalDate(),
-            tom = new Date(now);
+      const now = getLocalDate(), tom = new Date(now);
       tom.setDate(now.getDate() + 1);
       startDate.value = now.toISOString().split('T')[0];
       endDate.value = tom.toISOString().split('T')[0];
@@ -106,9 +123,9 @@
       startTime.value = endTime.value = t;
     }
 
-    function formatImage(n) {
-      const key = n === 'ISUZU M-X' ? 'Isuzu-MU-X_RungrojCarrent.png' : n.replace(/\s+/g, '-').replace(/[^\w\-]/g, '') + '_RungrojCarrent.png';
-      return `https://res.cloudinary.com/dcwjok3nu/image/upload/v1752730830/${key}`;
+    function formatImage(name) {
+      const key = filenameMap[name];
+      return `./src/image/${key}.png`;
     }
 
     cars.forEach(c => {
@@ -125,9 +142,7 @@
       summaryName.textContent = name;
       mainImg.src = imgUrl;
       summaryImg.src = imgUrl;
-      const s = new Date(startDate.value),
-            e = new Date(endDate.value),
-            d = Math.ceil((e - s) / 86400000) || 1;
+      const s = new Date(startDate.value), e = new Date(endDate.value), d = Math.ceil((e - s) / 86400000) || 1;
       summaryDuration.textContent = d + ' วัน';
       const total = price * d;
       costLabel.textContent = `${d} × ${price.toLocaleString('th-TH')} =`;
